@@ -1,0 +1,152 @@
+[
+  {
+    "sale_id": 1,
+    "product": "Widget",
+    "seller_name": "Alice Johnson",
+    "userID": "U101",
+    "datetime": "2024-01-05T09:15:00",
+    "quantity": 3,
+    "unit_price": 15.00,
+    "total_price": 45.00
+  },
+  {
+    "sale_id": 2,
+    "product": "Gadget",
+    "seller_name": "Bob Smith",
+    "userID": "U102",
+    "datetime": "2024-01-12T14:30:00",
+    "quantity": 1,
+    "unit_price": 99.99,
+    "total_price": 99.99
+  },
+  {
+    "sale_id": 3,
+    "product": "Thingamajig",
+    "seller_name": "Carol Evans",
+    "userID": "U103",
+    "datetime": "2024-01-20T16:45:00",
+    "quantity": 2,
+    "unit_price": 25.00,
+    "total_price": 50.00
+  },
+  {
+    "sale_id": 4,
+    "product": "Contraption",
+    "seller_name": "David Brown",
+    "userID": "U104",
+    "datetime": "2024-02-02T11:20:00",
+    "quantity": 5,
+    "unit_price": 12.00,
+    "total_price": 60.00
+  },
+  {
+    "sale_id": 5,
+    "product": "Doodad",
+    "seller_name": "Evelyn Davis",
+    "userID": "U105",
+    "datetime": "2024-02-15T10:00:00",
+    "quantity": 4,
+    "unit_price": 20.00,
+    "total_price": 80.00
+  },
+  {
+    "sale_id": 6,
+    "product": "Doohickey",
+    "seller_name": "Frank Martin",
+    "userID": "U106",
+    "datetime": "2024-02-28T17:00:00",
+    "quantity": 1,
+    "unit_price": 49.50,
+    "total_price": 49.50
+  },
+  {
+    "sale_id": 7,
+    "product": "Widget",
+    "seller_name": "Grace Lee",
+    "userID": "U107",
+    "datetime": "2024-03-03T09:00:00",
+    "quantity": 6,
+    "unit_price": 15.00,
+    "total_price": 90.00
+  },
+  {
+    "sale_id": 8,
+    "product": "Gadget",
+    "seller_name": "Alice Johnson",
+    "userID": "U101",
+    "datetime": "2024-03-15T13:45:00",
+    "quantity": 2,
+    "unit_price": 99.99,
+    "total_price": 199.98
+  },
+  {
+    "sale_id": 9,
+    "product": "Thingamajig",
+    "seller_name": "Helen King",
+    "userID": "U108",
+    "datetime": "2024-03-22T08:30:00",
+    "quantity": 3,
+    "unit_price": 25.00,
+    "total_price": 75.00
+  },
+  {
+    "sale_id": 10,
+    "product": "Contraption",
+    "seller_name": "Ian White",
+    "userID": "U109",
+    "datetime": "2024-04-01T10:30:00",
+    "quantity": 4,
+    "unit_price": 12.00,
+    "total_price": 48.00
+  },
+  {
+    "sale_id": 11,
+    "product": "Doodad",
+    "seller_name": "Jane Black",
+    "userID": "U110",
+    "datetime": "2024-04-10T15:00:00",
+    "quantity": 2,
+    "unit_price": 20.00,
+    "total_price": 40.00
+  },
+  {
+    "sale_id": 12,
+    "product": "Doohickey",
+    "seller_name": "Kevin Green",
+    "userID": "U111",
+    "datetime": "2024-04-18T12:00:00",
+    "quantity": 5,
+    "unit_price": 49.50,
+    "total_price": 247.50
+  },
+  {
+    "sale_id": 13,
+    "product": "Widget",
+    "seller_name": "Laura Scott",
+    "userID": "U112",
+    "datetime": "2024-04-25T09:30:00",
+    "quantity": 1,
+    "unit_price": 15.00,
+    "total_price": 15.00
+  },
+  {
+    "sale_id": 14,
+    "product": "Gadget",
+    "seller_name": "Michael Young",
+    "userID": "U113",
+    "datetime": "2024-02-08T14:45:00",
+    "quantity": 3,
+    "unit_price": 99.99,
+    "total_price": 299.97
+  },
+  {
+    "sale_id": 15,
+    "product": "Thingamajig",
+    "seller_name": "Nina Roberts",
+    "userID": "U114",
+    "datetime": "2024-03-28T11:15:00",
+    "quantity": 4,
+    "unit_price": 25.00,
+    "total_price": 100.00
+  }
+]
