@@ -80,26 +80,29 @@ class Program
                 Console.WriteLine("Assistant: Goodbye!");
                 break;
             }
-            else if (lowerMessage.StartsWith("show directory:"))
+
+            switch (lowerMessage)
             {
-                HandleDirectoryRequest(message);
-            }
-            else if (lowerMessage.Equals("pwd"))
-            {
-                HandleCurrentDirectoryRequest();
-            }
-            else if (lowerMessage.Equals("print my current directory"))
-            {
-                HandlePrintCurrentDirectory();
-            }
-            else
-            {
-                Console.Write("Assistant: ");
-                await foreach (var answerToken in chat.SendAsync(message))
-                {
-                    Console.Write(answerToken);
-                }
-                Console.WriteLine("\n==============================");
+                case string msg when msg.StartsWith("show directory:"):
+                    HandleDirectoryRequest(message);
+                    break;
+
+                case "pwd":
+                    HandleCurrentDirectoryRequest();
+                    break;
+
+                case "print my current directory":
+                    HandlePrintCurrentDirectory();
+                    break;
+
+                default:
+                    Console.Write("Assistant: ");
+                    await foreach (var answerToken in chat.SendAsync(message))
+                    {
+                        Console.Write(answerToken);
+                    }
+                    Console.WriteLine("\n==============================");
+                    break;
             }
         }
     }

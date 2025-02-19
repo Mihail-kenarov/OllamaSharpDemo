@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OllamaSharpSoloDemo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd7ee16c15904e167c60ba32a8bc9dafd32eb169")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d9335365ef4f8c492c698b8c7db7a2ec2c4e4034")]
 [assembly: System.Reflection.AssemblyProductAttribute("OllamaSharpSoloDemo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OllamaSharpSoloDemo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
