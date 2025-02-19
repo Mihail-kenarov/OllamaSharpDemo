@@ -3,6 +3,8 @@ using OllamaSharp.Models;
 using OllamaSharpSoloDemo;
 using OllamaSharpSoloDemo.Tools;
 using System.IO;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 class Program
 {
@@ -10,7 +12,12 @@ class Program
     private static OllamaApiClient ollama;
     private static string message;
     private static readonly HashSet<string> exitWords = new HashSet<string> { "bye", "goodbye", "chao" };
-    private static readonly ToolBox toolBox = new ToolBox(new ToolDirectoryComponents());
+
+    private static readonly ToolDirectoryComponents toolDirectoryComponents = new ToolDirectoryComponents();
+
+    private static readonly ToolTextRead toolTextRead = new ToolTextRead(toolDirectoryComponents);
+
+    private static readonly ToolBox toolBox = new ToolBox(toolDirectoryComponents, toolTextRead);
 
     static async Task Main()
     {
@@ -87,6 +94,9 @@ class Program
                     HandleDirectoryRequest(message);
                     break;
 
+                case string msg when msg.StartsWith("read file:"):
+                    HandleReadFileRequest(message);
+                    break;
                 case "pwd":
                     HandleCurrentDirectoryRequest();
                     break;
@@ -119,6 +129,21 @@ class Program
 
         Console.WriteLine($"\nAssistant: Checking directory {directoryPath}...");
         toolBox.OpenDirectory(Path.GetFullPath(directoryPath));
+        Console.WriteLine("==============================");
+    }
+
+    private static void HandleReadFileRequest(string message)
+    {
+        var filePath = message.Substring("read file:".Length).Trim();
+
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            Console.WriteLine("\nAssistant: Please provide a valid file path.");
+            return;
+        }
+
+        Console.WriteLine($"\nAssistant: Reading file {filePath}...");
+        toolBox.ReadText(Path.GetFullPath(filePath));
         Console.WriteLine("==============================");
     }
 

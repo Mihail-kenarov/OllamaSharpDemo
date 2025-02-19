@@ -29,8 +29,6 @@ namespace OllamaSharpSoloDemo.Tools
                 }
                 else
                 {
-
-
                     Console.WriteLine("Directory does not exist. Please check the path and try again.");
                 }
             }
@@ -48,7 +46,7 @@ namespace OllamaSharpSoloDemo.Tools
             Console.WriteLine($"\nCurrent Working Directory: {currentDir}");
         }
 
-        private bool IsValidPath(string path) => Path.IsPathRooted(path) && !string.IsNullOrWhiteSpace(path);
+        public bool IsValidPath(string path) => Path.IsPathRooted(path) && !string.IsNullOrWhiteSpace(path);
 
         private bool DirectoryExists(string path) => Directory.Exists(path);
 
