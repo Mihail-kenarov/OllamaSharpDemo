@@ -2,20 +2,20 @@
 using OllamaSharp.Models;
 using OllamaSharpSoloDemo;
 using OllamaSharpSoloDemo.Tools;
-
+using System.IO;
 
 class Program
 {
     private static Uri uri;
     private static OllamaApiClient ollama;
     private static string message;
-    private static List<string> exitWords = new List<string> { "bye", "goodbye", "chao" };
-    private static ToolBox toolBox = new ToolBox(new ToolDirectoryComponents());
+    private static readonly HashSet<string> exitWords = new HashSet<string> { "bye", "goodbye", "chao" };
+    private static readonly ToolBox toolBox = new ToolBox(new ToolDirectoryComponents());
 
     static async Task Main()
     {
         ClientSetup();
-        var models = await ShowModels(); 
+        var models = await ShowModels();
         SelectModel(models);
         await StartChat();
     }
@@ -37,56 +37,58 @@ class Program
         }
         Console.WriteLine();
 
-        return models.Select(m => m.Name).ToList(); 
+        return models.Select(m => m.Name).ToList();
     }
 
     private static void SelectModel(List<string> models)
     {
-        string selectedModel;
-        bool isValidModel;
-
-        do
+        while (true)
         {
             Console.WriteLine("Write the name of the model that you would like to use:");
-            selectedModel = Console.ReadLine();
+            var selectedModel = Console.ReadLine();
 
-            isValidModel = models.Contains(selectedModel, StringComparer.OrdinalIgnoreCase);
-
-            if (!isValidModel)
+            if (models.Contains(selectedModel, StringComparer.OrdinalIgnoreCase))
+            {
+                ollama.SelectedModel = selectedModel;
+                Console.WriteLine($"\nYou have selected to work with {ollama.SelectedModel}\n");
+                Console.WriteLine("Feel free to start your chat!\n");
+                break;
+            }
+            else
             {
                 Console.WriteLine("\nInvalid model. Please select one from the list above.\n");
             }
-
-        } while (!isValidModel);
-
-        ollama.SelectedModel = selectedModel;
-        Console.WriteLine($"\nYou have selected to work with {ollama.SelectedModel}\n");
-        Console.WriteLine("Feel free to start your chat!\n");
+        }
     }
 
     private static async Task StartChat()
     {
         var chat = new Chat(ollama);
 
-        do
+        while (true)
         {
             Console.Write("User: ");
             message = Console.ReadLine();
 
-            if (exitWords.Contains(message.ToLower()))
+            if (string.IsNullOrWhiteSpace(message))
+                break;
+
+            var lowerMessage = message.ToLower();
+
+            if (exitWords.Contains(lowerMessage))
             {
                 Console.WriteLine("Assistant: Goodbye!");
                 break;
             }
-            else if (message.StartsWith("show directory:", StringComparison.OrdinalIgnoreCase))
+            else if (lowerMessage.StartsWith("show directory:"))
             {
                 HandleDirectoryRequest(message);
             }
-            else if (message.Equals("where am I?", StringComparison.OrdinalIgnoreCase))
+            else if (lowerMessage.Equals("pwd"))
             {
                 HandleCurrentDirectoryRequest();
             }
-            else if (message.Equals("print my current directory", StringComparison.OrdinalIgnoreCase))
+            else if (lowerMessage.Equals("print my current directory"))
             {
                 HandlePrintCurrentDirectory();
             }
@@ -99,32 +101,27 @@ class Program
                 }
                 Console.WriteLine("\n==============================");
             }
-        } while (!string.IsNullOrEmpty(message));
+        }
     }
 
     private static void HandleDirectoryRequest(string message)
     {
+        var directoryPath = message.Substring("show directory:".Length).Trim();
 
-        string[] words = message.Split(' ');
-        if (words.Length > 6) 
-        {
-            string directoryPath = message.Substring(message.IndexOf("directory") + 9).Trim();
-
-            Console.WriteLine($"\nAssistant: Checking directory {directoryPath}...");
-            toolBox.OpenDirectory(directoryPath);
-            Console.WriteLine("==============================");
-        }
-        else
+        if (string.IsNullOrWhiteSpace(directoryPath))
         {
             Console.WriteLine("\nAssistant: Please provide a valid directory path.");
+            return;
         }
 
-
+        Console.WriteLine($"\nAssistant: Checking directory {directoryPath}...");
+        toolBox.OpenDirectory(Path.GetFullPath(directoryPath));
+        Console.WriteLine("==============================");
     }
 
     private static void HandleCurrentDirectoryRequest()
     {
-        string currentDirectory = toolBox.GetCurrentDirectory();
+        var currentDirectory = toolBox.GetCurrentDirectory();
         Console.WriteLine($"\nAssistant: You are currently in: {currentDirectory}");
         Console.WriteLine("==============================");
     }

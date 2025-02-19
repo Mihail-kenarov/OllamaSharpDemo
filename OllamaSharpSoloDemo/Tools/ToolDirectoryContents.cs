@@ -9,18 +9,20 @@ namespace OllamaSharpSoloDemo.Tools
         {
             try
             {
-                if (!IsValidPath(path))
+                string fullPath = Path.GetFullPath(path);
+
+                if (!IsValidPath(fullPath))
                 {
                     Console.WriteLine("Invalid directory path.");
                     return;
                 }
 
-                if (DirectoryExists(path))
+                if (DirectoryExists(fullPath))
                 {
-                    Console.WriteLine($"Opening directory: {path}");
+                    Console.WriteLine($"Opening directory: {fullPath}");
 
-                    string[] files = Directory.GetFiles(path);
-                    string[] directories = Directory.GetDirectories(path);
+                    string[] files = Directory.GetFiles(fullPath);
+                    string[] directories = Directory.GetDirectories(fullPath);
 
                     PrintFiles(files);
                     PrintDirectories(directories);
@@ -36,10 +38,7 @@ namespace OllamaSharpSoloDemo.Tools
             }
         }
 
-        public string GetCurrentDirectory()
-        {
-            return Directory.GetCurrentDirectory(); 
-        }
+        public string GetCurrentDirectory() => Directory.GetCurrentDirectory();
 
         public void PrintCurrentDirectory()
         {
@@ -47,7 +46,7 @@ namespace OllamaSharpSoloDemo.Tools
             Console.WriteLine($"\nCurrent Working Directory: {currentDir}");
         }
 
-        private bool IsValidPath(string path) => !string.IsNullOrWhiteSpace(path);
+        private bool IsValidPath(string path) => Path.IsPathRooted(path) && !string.IsNullOrWhiteSpace(path);
 
         private bool DirectoryExists(string path) => Directory.Exists(path);
 
@@ -58,18 +57,28 @@ namespace OllamaSharpSoloDemo.Tools
             {
                 Console.WriteLine("No files found in this directory.");
             }
-            foreach (var file in files)
+            else
             {
-                Console.WriteLine(file);
+                foreach (var file in files)
+                {
+                    Console.WriteLine(Path.GetFileName(file));
+                }
             }
         }
 
         private void PrintDirectories(string[] directories)
         {
             Console.WriteLine("Directories:");
-            foreach (var dir in directories)
+            if (directories.Length == 0)
             {
-                Console.WriteLine(dir);
+                Console.WriteLine("No subdirectories found.");
+            }
+            else
+            {
+                foreach (var dir in directories)
+                {
+                    Console.WriteLine(Path.GetFileName(dir));
+                }
             }
         }
     }

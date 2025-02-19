@@ -36,7 +36,7 @@
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Program.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Program.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\Program.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAMwEcAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAQwFQAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-18T13:42:33.136Z",
               "EditorCaption": ""
@@ -49,9 +49,10 @@
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Tools\\ToolDirectoryContents.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\ToolDirectoryContents.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\Tools\\ToolDirectoryContents.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAYwDUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-19T11:10:04.717Z"
+              "WhenOpened": "2025-02-19T11:10:04.717Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -61,9 +62,10 @@
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\ToolBox.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\ToolBox.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\ToolBox.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAowBMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-19T10:54:25.317Z"
+              "WhenOpened": "2025-02-19T10:54:25.317Z",
+              "EditorCaption": ""
             }
           ]
         }
