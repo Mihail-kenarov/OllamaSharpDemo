@@ -1,28 +1,20 @@
 ﻿using OllamaSharp;
-using OllamaSharp.Models;
-using OllamaSharpSoloDemo;
+using OllamaSharp.Models.Chat;
+using OllamaSharp.Models.Exceptions;
+using OllamaSharpSoloDemo.Support;
 using OllamaSharpSoloDemo.Tools;
-using OllamaSharpSoloDemo.Chat;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 class Program
 {
     private static Uri uri;
     private static OllamaApiClient ollama;
     private static string message;
-    private static readonly HashSet<string> exitWords = new HashSet<string> { "bye", "goodbye", "chao" };
+    private static readonly HashSet<string> exitWords = new HashSet<string> { "bye", "goodbye", "chao", "exit" };
 
     static async Task Main()
     {
         ClientSetup();
-
-        // Initialize tools (ToolInitializer or similar)
-        ToolInitializer.InitializeTools();
-
         var models = await ShowModels();
         SelectModel(models);
         await StartChat();
@@ -53,9 +45,9 @@ class Program
         while (true)
         {
             Console.WriteLine("Write the name of the model that you would like to use:");
-            var selectedModel = Console.ReadLine();
+            var selectedModel = Console.ReadLine()?.Trim();
 
-            if (models.Contains(selectedModel, StringComparer.OrdinalIgnoreCase))
+            if (!string.IsNullOrWhiteSpace(selectedModel) && models.Contains(selectedModel, StringComparer.OrdinalIgnoreCase))
             {
                 ollama.SelectedModel = selectedModel;
                 Console.WriteLine($"\nYou have selected to work with {ollama.SelectedModel}\n");
@@ -71,56 +63,89 @@ class Program
 
     private static async Task StartChat()
     {
-        var chat = new OllamaSharpSoloDemo.Chat.Chat(ollama);
+        var chat = new Chat(ollama);
+
+        var tools = new List<DwmTool>
+        {
+            new DirectoryTool(),
+            new ReadFileTool()
+        };
 
         while (true)
         {
             Console.Write("User: ");
             message = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(message))
-                break;
 
-            if (exitWords.Contains(message.ToLower()))
+            var exit = false;
+            var send = true;
+            switch (message.ToLowerInvariant())
+            {
+                case "bye":
+                case "goodbye":
+                case "chao":
+                case "exit":
+                    exit = true;
+                    break;
+
+                case "/list":
+                    break;
+
+                case "/clear":
+                    chat.Messages.RemoveAll(x => x.Role != ChatRole.System);
+                    send = false;
+                    break;
+            }
+
+            if (exit)
             {
                 Console.WriteLine("Assistant: Goodbye!");
                 break;
             }
 
-            // Create a message payload that includes the tools metadata.
-            // Assume ChatMessage is a model that accepts a Tools property.
-            var toolsMetadata = ToolRegistry.GetAllToolMetadata().ToList();
-            var chatMessage = new ChatMessage
+            if (send)
             {
-                Role = "user",
-                Content = message,
-                Tools = toolsMetadata  // This informs the model of the available tools.
-            };
 
-            // Send the chat message and get the response.
-            ChatResponse response = await chat.SendAsync(chatMessage);
-
-            // Check if the response includes a tool call.
-            if (response.ToolCall != null)
-            {
-                // Look up the tool from the registry.
-                if (ToolRegistry.TryGetTool(response.ToolCall.Name, out ToolDefinition toolDefinition))
+                // calling ollama
+                try
                 {
-                    // Execute the tool using the parameters from the response.
-                    string toolOutput = toolDefinition.Function(response.ToolCall.Parameters);
-                    Console.WriteLine($"\nAssistant (Tool Output): {toolOutput}");
+                    await foreach (var answerToken in chat.SendAsync(message, tools))
+                        Console.WriteLine(answerToken);
                 }
-                else
+                catch (OllamaException ex)
                 {
-                    Console.WriteLine("\nAssistant: Requested tool not found.");
+                    //                AnsiConsole.MarkupLineInterpolated($"[{ErrorTextColor}]{ex.Message}[/]");
+                }
+
+                var toolCalls = chat.Messages.LastOrDefault()?.ToolCalls?.ToArray() ?? [];
+                if (toolCalls.Any())
+                {
+                    Console.WriteLine("Tools used:");
+                    foreach (var function in toolCalls
+                        .Where(t => t.Function != null)
+                        .Select(t => t.Function))
+                    {
+                        Console.WriteLine($"  -{function.Name}");
+                        Console.WriteLine($"    - parameter");
+
+                        if (function.Arguments is not null)
+                        {
+                            foreach (var argument in function.Arguments)
+                                Console.WriteLine($"      - [purple]{argument.Key}[/]: value :{argument.Value}");
+                        }
+
+                        // find tool
+                        var tool = tools.FirstOrDefault(t => t.Name == function.Name);
+                        var response = tool == null
+                            ? "tool not found"
+                            : await tool.ExecuteAsync(function.Arguments);
+
+                        Console.WriteLine($"    - return value: \"{response}\"");
+
+                        await foreach (var answerToken in chat.SendAsAsync(ChatRole.Tool, response, tools))
+                            Console.WriteLine(answerToken);
+                    }
                 }
             }
-            else
-            {
-                // If no tool call, simply output the content.
-                Console.WriteLine($"\nAssistant: {response.Content}");
-            }
-
-            Console.WriteLine("\n==============================");
         }
     }
 }
