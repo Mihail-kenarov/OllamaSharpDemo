@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.AI;
-using OllamaSharp;
+﻿using OllamaSharp;
 using OllamaSharp.Models;
 using OllamaSharpSoloDemo;
 using OllamaSharpSoloDemo.Tools;
+using OllamaSharpSoloDemo.Chat;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,7 +71,7 @@ class Program
 
     private static async Task StartChat()
     {
-        var chat = new Chat(ollama);
+        var chat = new OllamaSharpSoloDemo.Chat.Chat(ollama);
 
         while (true)
         {
