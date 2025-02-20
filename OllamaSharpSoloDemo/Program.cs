@@ -1,9 +1,12 @@
-﻿using OllamaSharp;
+﻿using Microsoft.Extensions.AI;
+using OllamaSharp;
 using OllamaSharp.Models;
 using OllamaSharpSoloDemo;
 using OllamaSharpSoloDemo.Tools;
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 class Program
@@ -13,15 +16,13 @@ class Program
     private static string message;
     private static readonly HashSet<string> exitWords = new HashSet<string> { "bye", "goodbye", "chao" };
 
-    private static readonly ToolDirectoryComponents toolDirectoryComponents = new ToolDirectoryComponents();
-
-    private static readonly ToolTextRead toolTextRead = new ToolTextRead(toolDirectoryComponents);
-
-    private static readonly ToolBox toolBox = new ToolBox(toolDirectoryComponents, toolTextRead);
-
     static async Task Main()
     {
         ClientSetup();
+
+        // Initialize tools (ToolInitializer or similar)
+        ToolInitializer.InitializeTools();
+
         var models = await ShowModels();
         SelectModel(models);
         await StartChat();
@@ -76,88 +77,50 @@ class Program
         {
             Console.Write("User: ");
             message = Console.ReadLine();
-
             if (string.IsNullOrWhiteSpace(message))
                 break;
 
-            var lowerMessage = message.ToLower();
-
-            if (exitWords.Contains(lowerMessage))
+            if (exitWords.Contains(message.ToLower()))
             {
                 Console.WriteLine("Assistant: Goodbye!");
                 break;
             }
 
-            switch (lowerMessage)
+            // Create a message payload that includes the tools metadata.
+            // Assume ChatMessage is a model that accepts a Tools property.
+            var toolsMetadata = ToolRegistry.GetAllToolMetadata().ToList();
+            var chatMessage = new ChatMessage
             {
-                case string msg when msg.StartsWith("show directory:"):
-                    HandleDirectoryRequest(message);
-                    break;
+                Role = "user",
+                Content = message,
+                Tools = toolsMetadata  // This informs the model of the available tools.
+            };
 
-                case string msg when msg.StartsWith("read file:"):
-                    HandleReadFileRequest(message);
-                    break;
-                case "pwd":
-                    HandleCurrentDirectoryRequest();
-                    break;
+            // Send the chat message and get the response.
+            ChatResponse response = await chat.SendAsync(chatMessage);
 
-                case "print my current directory":
-                    HandlePrintCurrentDirectory();
-                    break;
-
-                default:
-                    Console.Write("Assistant: ");
-                    await foreach (var answerToken in chat.SendAsync(message))
-                    {
-                        Console.Write(answerToken);
-                    }
-                    Console.WriteLine("\n==============================");
-                    break;
+            // Check if the response includes a tool call.
+            if (response.ToolCall != null)
+            {
+                // Look up the tool from the registry.
+                if (ToolRegistry.TryGetTool(response.ToolCall.Name, out ToolDefinition toolDefinition))
+                {
+                    // Execute the tool using the parameters from the response.
+                    string toolOutput = toolDefinition.Function(response.ToolCall.Parameters);
+                    Console.WriteLine($"\nAssistant (Tool Output): {toolOutput}");
+                }
+                else
+                {
+                    Console.WriteLine("\nAssistant: Requested tool not found.");
+                }
             }
+            else
+            {
+                // If no tool call, simply output the content.
+                Console.WriteLine($"\nAssistant: {response.Content}");
+            }
+
+            Console.WriteLine("\n==============================");
         }
-    }
-
-    private static void HandleDirectoryRequest(string message)
-    {
-        var directoryPath = message.Substring("show directory:".Length).Trim();
-
-        if (string.IsNullOrWhiteSpace(directoryPath))
-        {
-            Console.WriteLine("\nAssistant: Please provide a valid directory path.");
-            return;
-        }
-
-        Console.WriteLine($"\nAssistant: Checking directory {directoryPath}...");
-        toolBox.OpenDirectory(Path.GetFullPath(directoryPath));
-        Console.WriteLine("==============================");
-    }
-
-    private static void HandleReadFileRequest(string message)
-    {
-        var filePath = message.Substring("read file:".Length).Trim();
-
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            Console.WriteLine("\nAssistant: Please provide a valid file path.");
-            return;
-        }
-
-        Console.WriteLine($"\nAssistant: Reading file {filePath}...");
-        toolBox.ReadText(Path.GetFullPath(filePath));
-        Console.WriteLine("==============================");
-    }
-
-    private static void HandleCurrentDirectoryRequest()
-    {
-        var currentDirectory = toolBox.GetCurrentDirectory();
-        Console.WriteLine($"\nAssistant: You are currently in: {currentDirectory}");
-        Console.WriteLine("==============================");
-    }
-
-    private static void HandlePrintCurrentDirectory()
-    {
-        Console.WriteLine("\nAssistant: Printing your current directory...");
-        toolBox.PrintCurrentDirectory();
-        Console.WriteLine("==============================");
     }
 }
