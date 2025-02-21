@@ -2,112 +2,70 @@
 using OllamaSharpSoloDemo.Support;
 using System.Text.Json;
 using System.IO;
+using System.Threading.Tasks;
+using System;
 
 namespace OllamaSharpSoloDemo.Tools
 {
     public sealed class ReadFileTool : DwmTool
     {
-        // Set your default root directory here.
-        private const string DefaultRootDirectory = @"C:\Users\kenar";
-
         public override string Name => Function.Name;
 
         public ReadFileTool()
         {
             Function = new Function
             {
-                Description = "Reads the content of a specified file. If it's JSON, returns parsed JSON; otherwise returns raw text. " +
-                              "Can accept relative paths (resolved from C:\\Users\\kenar). Tries searching parent directories if not found." +
-                              "If you are to not be able to see the document from the relative path, go 2-3 layers deeper to see if the request directory or files is there",
+                Description = "Reads the content of a specified file. If JSON, returns formatted JSON; otherwise raw text. Accepts relative paths (from C:\\Users\\kenar) and searches parent directories if not found.",
                 Name = "read_file",
                 Parameters = new Parameters
                 {
-                    Properties = new Dictionary<string, Property>
+                    Properties = new System.Collections.Generic.Dictionary<string, Property>
                     {
-                        ["path"] = new()
-                        {
-                            Type = "string",
-                            Description = "Full or relative path to the file to read."
-                        }
+                        ["path"] = new() { Type = "string", Description = "Full or relative path to the file to read." }
                     },
                     Required = new[] { "path" }
                 }
             };
         }
 
-        public override async Task<string> ExecuteAsync(IDictionary<string, object> namedParameters)
+        public override async Task<string> ExecuteAsync(System.Collections.Generic.IDictionary<string, object> namedParameters)
         {
-            // Validate parameters and extract the input path.
-            var inputPath = ValidateAndExtractPath(namedParameters);
-            if (inputPath == null)
+            var inputPath = namedParameters?["path"]?.ToString();
+            if (string.IsNullOrWhiteSpace(inputPath))
                 return "File path is empty or no parameters provided.";
 
-            // Resolve the file path using the helper.
-            var filePath = ResolveFilePath(inputPath);
+            // First, use the common ResolvePath helper.
+            var candidatePath = ResolvePath(inputPath);
+
+            // If the file doesn't exist at the resolved path, search parent directories.
+            var filePath = File.Exists(candidatePath)
+                           ? candidatePath
+                           : SearchParentDirectories(inputPath);
+
             if (filePath == null)
                 return $"File not found: {inputPath}";
 
-            // Confirm that the file exists.
             if (!File.Exists(filePath))
                 return $"File does not exist: {filePath}";
 
-            // Get file extension.
-            var extension = Path.GetExtension(filePath);
-
-            // Read file content.
             var content = await ReadFileContentAsync(filePath);
             if (content.StartsWith("Error reading file:"))
-                return content; // Propagate error message.
+                return content;
 
-            // Format content based on file type (JSON vs. others).
-            return FormatContent(extension, content);
+            return FormatContent(Path.GetExtension(filePath), content);
         }
 
-        
-        /// Validates the input parameters and extracts the file path.
-        private string ValidateAndExtractPath(IDictionary<string, object> parameters)
+        // Searches up from the default root for the file.
+        private string SearchParentDirectories(string inputPath)
         {
-            if (parameters == null)
-                return null;
-
-            var path = parameters.ContainsKey("path") ? parameters["path"]?.ToString() : null;
-            return string.IsNullOrWhiteSpace(path) ? null : path;
-        }
-
-        /// <summary>
-        /// Attempts to locate the file by:
-        /// 1) Checking if the path is absolute and exists.
-        /// 2) If relative, combining with DefaultRootDirectory and checking existence.
-        /// 3) If still not found, walking up the parent directories of DefaultRootDirectory (until reaching C:\Users) to see if the file is there.
-        /// </summary>
-        private string ResolveFilePath(string inputPath)
-        {
-            // If the path is absolute, check it directly.
-            if (Path.IsPathRooted(inputPath))
-            {
-                var absolutePath = Path.GetFullPath(inputPath);
-                return File.Exists(absolutePath) ? absolutePath : null;
-            }
-
-            // Otherwise, combine with the default root directory.
-            var candidatePath = Path.Combine(DefaultRootDirectory, inputPath);
-            candidatePath = Path.GetFullPath(candidatePath);
-            if (File.Exists(candidatePath))
-                return candidatePath;
-
-            // Optionally search up the directory tree from DefaultRootDirectory.
             var currentDir = new DirectoryInfo(DefaultRootDirectory);
             while (currentDir != null && currentDir.FullName.StartsWith(@"C:\Users", StringComparison.OrdinalIgnoreCase))
             {
-                var testPath = Path.Combine(currentDir.FullName, inputPath);
-                testPath = Path.GetFullPath(testPath);
+                var testPath = Path.GetFullPath(Path.Combine(currentDir.FullName, inputPath));
                 if (File.Exists(testPath))
                     return testPath;
-
                 currentDir = currentDir.Parent;
             }
-
-            // Not found.
             return null;
         }
 
@@ -115,10 +73,8 @@ namespace OllamaSharpSoloDemo.Tools
         {
             try
             {
-                using (var reader = new StreamReader(filePath))
-                {
-                    return await reader.ReadToEndAsync();
-                }
+                using var reader = new StreamReader(filePath);
+                return await reader.ReadToEndAsync();
             }
             catch (Exception ex)
             {
