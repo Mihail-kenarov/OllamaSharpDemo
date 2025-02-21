@@ -3,16 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|solutionrelative:ollamasharpsolodemo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\tools\\readfiletool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|solutionrelative:ollamasharpsolodemo\\tools\\readfiletool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\tools\\llmfilemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|solutionrelative:ollamasharpsolodemo\\tools\\llmfilemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\tools\\directorytool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|solutionrelative:ollamasharpsolodemo\\tools\\directorytool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|solutionrelative:ollamasharpsolodemo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\datasets\\sales.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|solutionrelative:ollamasharpsolodemo\\datasets\\sales.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E059D068-4C63-4183-9669-B8DF97DBC3AA}|OllamaSharpSoloDemo\\OllamaSharpSoloDemo.csproj|c:\\users\\kenar\\desktop\\internship\\ollamasharpsolodemo\\ollamasharpsolodemo\\support\\dwmtool.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -25,18 +33,18 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 241,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Program.cs",
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Program.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Program.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\Program.cs",
-              "ViewState": "AgIAAFsAAAAAAAAAAAAWwI0AAABOAAAAAAAAAA==",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAuwIgAAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-19T15:52:00.86Z",
               "IsPinned": true,
@@ -50,7 +58,7 @@
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Tools\\DirectoryTool.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\DirectoryTool.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\Tools\\DirectoryTool.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABBAAAAAAAAAA==",
+              "ViewState": "AgIAADUAAAAAAAAAAADwvz4AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-20T12:18:44.15Z",
               "IsPinned": true,
@@ -66,34 +74,54 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "DwmTool.cs",
-              "DocumentMoniker": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Support\\DwmTool.cs",
-              "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Support\\DwmTool.cs",
-              "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Support\\DwmTool.cs",
-              "RelativeToolTip": "OllamaSharpSoloDemo\\Support\\DwmTool.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-20T14:18:39.885Z",
+              "DocumentIndex": 4,
+              "Title": "sales.json",
+              "DocumentMoniker": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\DataSets\\sales.json",
+              "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\DataSets\\sales.json",
+              "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\DataSets\\sales.json",
+              "RelativeToolTip": "OllamaSharpSoloDemo\\DataSets\\sales.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-21T09:31:07.049Z",
               "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
+            },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "ReadFileTool.cs",
               "DocumentMoniker": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAgwDcAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-20T14:59:51.127Z",
+              "WhenOpened": "2025-02-21T07:58:30.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LlmFileModel.cs",
+              "DocumentMoniker": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\LlmFileModel.cs",
+              "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Tools\\LlmFileModel.cs",
+              "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\LlmFileModel.cs",
+              "RelativeToolTip": "OllamaSharpSoloDemo\\Tools\\LlmFileModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T16:24:32.095Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DwmTool.cs",
+              "DocumentMoniker": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Support\\DwmTool.cs",
+              "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Support\\DwmTool.cs",
+              "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Support\\DwmTool.cs",
+              "RelativeToolTip": "OllamaSharpSoloDemo\\Support\\DwmTool.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T14:18:39.885Z",
               "EditorCaption": ""
             }
           ]

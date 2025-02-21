@@ -1,5 +1,6 @@
 ﻿using OllamaSharp.Models.Chat;
 using OllamaSharpSoloDemo.Support;
+using System.Text.Json;
 
 namespace OllamaSharpSoloDemo.Tools
 {
@@ -11,8 +12,8 @@ namespace OllamaSharpSoloDemo.Tools
         {
             Function = new Function
             {
-                Description = "Lists the files and directories in a specified directory. You are looking for a specific word that is common when it comes to the" +
-                "structure of the computers and the If no path is provided, defaults to the current working directory.",
+                Description = "Lists the files and directories in a specified directory. You are looking for a specific word that is common when it comes to computer structure." +
+                "If you do not find it in the directory just opened, look one layer above it. If it is not there, look one layer up again. All the way until C:\\Users ",
                 Name = "list_directory",
                 Parameters = new Parameters
                 {
@@ -52,10 +53,40 @@ namespace OllamaSharpSoloDemo.Tools
                 return $"Directory does not exist: {fullPath}";
             }
 
-            var fileNames = GetSortedFileNames(fullPath);
-            var directoryNames = GetSortedDirectoryNames(fullPath);
+            var dir = new DirectoryInfo(fullPath);
 
-            return await FormatOutputAsync(fullPath, fileNames, directoryNames);
+            var list = dir.GetFiles().Select(x =>
+            {
+                return new LlmFileModel
+                {
+                    Filename = x.Name,
+                    Size = x.Length,
+                    LastModified = x.LastWriteTimeUtc,
+                    IsFile = true,
+                    IsDirectory = false
+                };
+            }).ToList();
+            list.AddRange(dir.GetDirectories().Select(x =>
+            {
+                return new LlmFileModel
+                {
+                    Filename = x.Name,
+                    Size = 0,
+                    LastModified = x.LastWriteTimeUtc,
+                    IsFile = false,
+                    IsDirectory = true
+                };
+            }));
+            return JsonSerializer.Serialize(new
+            {
+                Directory = fullPath,
+                Content = list
+            });
+
+            //          var fileNames = GetSortedFileNames(fullPath);
+            //          var directoryNames = GetSortedDirectoryNames(fullPath);
+
+            //        return await FormatOutputAsync(fullPath, fileNames, directoryNames);
         }
 
         private static string GetDirectoryPath(IDictionary<string, object> parameters)

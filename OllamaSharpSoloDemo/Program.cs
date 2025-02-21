@@ -64,6 +64,10 @@ class Program
     private static async Task StartChat()
     {
         var chat = new Chat(ollama);
+        chat.Options = new OllamaSharp.Models.RequestOptions
+        {
+            Temperature = 0f
+        };
 
         var tools = new List<DwmTool>
         {
@@ -143,6 +147,8 @@ class Program
 
                         await foreach (var answerToken in chat.SendAsAsync(ChatRole.Tool, response, tools))
                             Console.WriteLine(answerToken);
+                        Console.WriteLine("==============================================");
+
                     }
                 }
             }
