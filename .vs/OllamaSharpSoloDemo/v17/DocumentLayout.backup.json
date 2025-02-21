@@ -60,8 +60,7 @@
               "ViewState": "AgIAABgAAAAAAAAAAAAowBsAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-20T12:18:44.15Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -91,7 +90,7 @@
               "RelativeDocumentMoniker": "OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
               "ToolTip": "C:\\Users\\kenar\\Desktop\\Internship\\OllamaSharpSoloDemo\\OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
               "RelativeToolTip": "OllamaSharpSoloDemo\\Tools\\ReadFileTool.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAABQAAAAAAAAAA==",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAAwFQAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-21T07:58:30.889Z",
               "EditorCaption": ""
@@ -118,8 +117,7 @@
               "RelativeToolTip": "OllamaSharpSoloDemo\\Support\\DwmTool.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-20T14:18:39.885Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-20T14:18:39.885Z"
             }
           ]
         }
