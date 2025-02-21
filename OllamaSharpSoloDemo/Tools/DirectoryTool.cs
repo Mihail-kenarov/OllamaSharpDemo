@@ -1,142 +1,182 @@
 ﻿using OllamaSharp.Models.Chat;
 using OllamaSharpSoloDemo.Support;
 using System.Text.Json;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OllamaSharpSoloDemo.Tools
 {
     public sealed class DirectoryTool : DwmTool
     {
+        private const string DefaultRootDirectory = @"C:\Users\kenar";
+
         public override string Name => Function.Name;
 
         public DirectoryTool()
         {
             Function = new Function
             {
-                Description = "Lists the files and directories in a specified directory. You are looking for a specific word that is common when it comes to computer structure." +
-                "If you do not find it in the directory just opened, look one layer above it. If it is not there, look one layer up again. All the way until C:\\Users ",
+                Description = "Lists the names of files and directories in a specified directory (only the first level) starting from C:\\Users\\kenar. " +
+                              "Skips hidden files and directories, and returns two lists: one for directories and one for files.",
                 Name = "list_directory",
                 Parameters = new Parameters
                 {
                     Properties = new Dictionary<string, Property>
                     {
-                        ["path"] = new() { Type = "string", Description = "The path to the directory to list files and directories for. Defaults to the current working directory." }
+                        ["path"] = new() { Type = "string", Description = "The path to the directory to list. Defaults to C:\\Users\\kenar." }
                     },
-                    Required = ["path"],
+                    Required = new string[] { }
                 }
             };
         }
 
         public override async Task<string> ExecuteAsync(IDictionary<string, object> namedParameters)
         {
-            if (namedParameters == null)
-                return null;
-
             var path = GetDirectoryPath(namedParameters);
-            return await ListDirectoryAsync(path, namedParameters);
+            return await ListDirectoryAsync(path);
+        }
+
+        private string GetDirectoryPath(IDictionary<string, object> namedParameters)
+        {
+            if (namedParameters != null &&
+                namedParameters.ContainsKey("path") &&
+                !string.IsNullOrWhiteSpace(namedParameters["path"]?.ToString()))
+            {
+                var inputPath = namedParameters["path"].ToString();
+                // Resolve relative paths relative to the root directory
+                string resolvedPath = Path.IsPathRooted(inputPath)
+                    ? inputPath
+                    : Path.Combine(DefaultRootDirectory, inputPath);
+                return Path.GetFullPath(resolvedPath);
+            }
+
+            return DefaultRootDirectory; // Default to C:\Users\kenar
+        }
+
+        private async Task<string> ListDirectoryAsync(string directoryPath)
+        {
+            string fullPath = Path.GetFullPath(directoryPath);
+
+            if (!Directory.Exists(fullPath))
+            {
+                return JsonSerializer.Serialize(new { error = $"Directory does not exist: {fullPath}" });
+            }
+
+            var dirInfo = new DirectoryInfo(fullPath);
+            var rootItem = BuildDirectoryItem(dirInfo);
+
+            // Use the helper to extract just the names of files and directories
+            var result = ExtractNames(rootItem);
+
+            return JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+        }
+
+        private LlmFileModel BuildDirectoryItem(DirectoryInfo dirInfo)
+        {
+            var item = new LlmFileModel
+            {
+                Filename = dirInfo.Name,
+                Size = 0,
+                LastModified = dirInfo.LastWriteTimeUtc,
+                IsFile = false,
+                IsDirectory = true,
+                Contents = new List<LlmFileModel>()
+            };
+
+            try
+            {
+                // Add non-hidden files in the current directory
+                foreach (var file in dirInfo.GetFiles())
+                {
+                    if ((file.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                        continue; // Skip hidden files
+
+                    item.Contents.Add(new LlmFileModel
+                    {
+                        Filename = file.Name,
+                        Size = file.Length,
+                        LastModified = file.LastWriteTimeUtc,
+                        IsFile = true,
+                        IsDirectory = false,
+                        Contents = null
+                    });
+                }
+
+                // Add non-hidden subdirectories (only one level deep, no recursion)
+                foreach (var subDir in dirInfo.GetDirectories())
+                {
+                    if ((subDir.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                        continue; // Skip hidden directories
+
+                    item.Contents.Add(new LlmFileModel
+                    {
+                        Filename = subDir.Name,
+                        Size = 0,
+                        LastModified = subDir.LastWriteTimeUtc,
+                        IsFile = false,
+                        IsDirectory = true,
+                        Contents = new List<LlmFileModel>() // or null, if you prefer
+                    });
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Handle access denied
+                item.Contents.Add(new LlmFileModel
+                {
+                    Filename = "Access Denied",
+                    Size = 0,
+                    LastModified = DateTime.UtcNow,
+                    IsFile = false,
+                    IsDirectory = true,
+                    Contents = null
+                });
+            }
+            catch (Exception ex)
+            {
+                item.Contents.Add(new LlmFileModel
+                {
+                    Filename = $"Error: {ex.Message}",
+                    Size = 0,
+                    LastModified = DateTime.UtcNow,
+                    IsFile = false,
+                    IsDirectory = true,
+                    Contents = null
+                });
+            }
+
+            return item;
         }
 
         /// <summary>
-        /// Lists the files and directories in a specified directory.
-        /// If no path is provided, defaults to the current working directory.
+        /// Extracts the names of files and directories from the first level of the provided LlmFileModel.
         /// </summary>
-        /// <param name="parameters">
-        /// IDictionary that can include an optional "path" key.
-        /// </param>
-        /// <returns>A formatted string of directory contents or an error message.</returns>
-        public static async Task<string> ListDirectoryAsync(string directoryPath, IDictionary<string, object> parameters)
+        /// <param name="model">The root model containing the contents of the directory.</param>
+        /// <returns>An object with two lists: Directories and Files.</returns>
+        private object ExtractNames(LlmFileModel model)
         {
-            // Safely get the path parameter or default to current directory
-            string fullPath = Path.GetFullPath(directoryPath);
+            var files = new List<string>();
+            var directories = new List<string>();
 
-            if (!IsValidDirectory(fullPath))
+            // Process only the immediate children
+            foreach (var item in model.Contents)
             {
-                return $"Directory does not exist: {fullPath}";
+                if (item.IsFile)
+                {
+                    files.Add(item.Filename);
+                }
+                else if (item.IsDirectory)
+                {
+                    directories.Add(item.Filename);
+                }
             }
 
-            var dir = new DirectoryInfo(fullPath);
-
-            var list = dir.GetFiles().Select(x =>
+            return new
             {
-                return new LlmFileModel
-                {
-                    Filename = x.Name,
-                    Size = x.Length,
-                    LastModified = x.LastWriteTimeUtc,
-                    IsFile = true,
-                    IsDirectory = false
-                };
-            }).ToList();
-            list.AddRange(dir.GetDirectories().Select(x =>
-            {
-                return new LlmFileModel
-                {
-                    Filename = x.Name,
-                    Size = 0,
-                    LastModified = x.LastWriteTimeUtc,
-                    IsFile = false,
-                    IsDirectory = true
-                };
-            }));
-            return JsonSerializer.Serialize(new
-            {
-                Directory = fullPath,
-                Content = list
-            });
-
-            //          var fileNames = GetSortedFileNames(fullPath);
-            //          var directoryNames = GetSortedDirectoryNames(fullPath);
-
-            //        return await FormatOutputAsync(fullPath, fileNames, directoryNames);
-        }
-
-        private static string GetDirectoryPath(IDictionary<string, object> parameters)
-        {
-            // Check if "path" is present AND not empty
-            if (parameters != null && parameters.ContainsKey("path") && !string.IsNullOrWhiteSpace(parameters["path"]?.ToString()))
-            {
-                var path = parameters["path"].ToString();
-                if (Directory.Exists(path))
-                    return path;
-            }
-
-            // Otherwise, default to current directory
-            return Directory.GetCurrentDirectory();
-        }
-
-        private static bool IsValidDirectory(string fullPath)
-        {
-            return Directory.Exists(fullPath);
-        }
-
-        private static List<string> GetSortedFileNames(string fullPath)
-        {
-            var fileArray = Directory.GetFiles(fullPath);
-            return fileArray
-                .Select(file => Path.GetFileName(file))
-                .OrderBy(name => name)
-                .ToList();
-        }
-
-        private static List<string> GetSortedDirectoryNames(string fullPath)
-        {
-            var directoryArray = Directory.GetDirectories(fullPath);
-            return directoryArray
-                .Select(dir => Path.GetFileName(dir))
-                .OrderBy(name => name)
-                .ToList();
-        }
-
-        private static Task<string> FormatOutputAsync(string fullPath, List<string> fileNames, List<string> directoryNames)
-        {
-            var filesOutput = fileNames.Count > 0
-                ? string.Join("\n", fileNames)
-                : "No files found";
-
-            var directoriesOutput = directoryNames.Count > 0
-                ? string.Join("\n", directoryNames)
-                : "No subdirectories found";
-
-            return Task.FromResult($"Contents of directory {fullPath}:\nFiles:\n\n{filesOutput}\n\nDirectories:\n{directoriesOutput}");
+                Directories = directories,
+                Files = files
+            };
         }
     }
 }
