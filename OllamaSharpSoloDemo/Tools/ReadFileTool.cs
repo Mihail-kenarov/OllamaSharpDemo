@@ -1,105 +1,62 @@
-﻿using OllamaSharp.Models.Chat;
-using OllamaSharpSoloDemo.Support;
-using System.Text.Json;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
-using System;
+using OllamaSharp.Models.Chat;
+using OllamaSharpSoloDemo.Support;
 
 namespace OllamaSharpSoloDemo.Tools
 {
-    public sealed class ReadFileTool : DwmTool
+    public sealed class ReadFileOnlyTool : DwmTool
     {
         public override string Name => Function.Name;
 
-        public ReadFileTool()
+        public ReadFileOnlyTool()
         {
             Function = new Function
             {
-                Description = "Reads the content of a specified file. If JSON, returns formatted JSON; otherwise raw text. Accepts relative paths (from C:\\Users\\kenar) and searches parent directories if not found.",
-                Name = "read_file",
+                Description = "Reads contents from a file and returns the text.",
+                Name = "read_file_only",
                 Parameters = new Parameters
                 {
-                    Properties = new System.Collections.Generic.Dictionary<string, Property>
+                    Properties = new Dictionary<string, Property>
                     {
-                        ["path"] = new() { Type = "string", Description = "Full or relative path to the file to read." }
+                        ["file_path"] = new() { Type = "string", Description = "Path to the file to read." },
+                        ["encoding"] = new() { Type = "string", Description = "Encoding to use (default: utf-8)." }
                     },
-                    Required = new[] { "path" }
+                    Required = new[] { "file_path" }
                 }
             };
         }
 
-        public override async Task<string> ExecuteAsync(System.Collections.Generic.IDictionary<string, object> namedParameters)
+        public override async Task<string> ExecuteAsync(IDictionary<string, object> namedParameters)
         {
-            var inputPath = namedParameters?["path"]?.ToString();
-            if (string.IsNullOrWhiteSpace(inputPath))
-                return "File path is empty or no parameters provided.";
+            string filePath = namedParameters?["file_path"]?.ToString();
+            string encoding = namedParameters.ContainsKey("encoding") ? namedParameters["encoding"].ToString() : "utf-8";
 
-            // First, use the common ResolvePath helper.
-            var candidatePath = ResolvePath(inputPath);
+            if (string.IsNullOrWhiteSpace(filePath))
+                return "Error: File path is empty.";
 
-            // If the file doesn't exist at the resolved path, search parent directories.
-            var filePath = File.Exists(candidatePath)
-                           ? candidatePath
-                           : SearchParentDirectories(inputPath);
-
-            if (filePath == null)
-                return $"File not found: {inputPath}";
-
-            if (!File.Exists(filePath))
-                return $"File does not exist: {filePath}";
-
-            var content = await ReadFileContentAsync(filePath);
-            if (content.StartsWith("Error reading file:"))
-                return content;
-
-            return FormatContent(Path.GetExtension(filePath), content);
+            return await ReadFileAsync(filePath, encoding);
         }
 
-        // Searches up from the default root for the file.
-        private string SearchParentDirectories(string inputPath)
-        {
-            var currentDir = new DirectoryInfo(DefaultRootDirectory);
-            while (currentDir != null && currentDir.FullName.StartsWith(@"C:\Users", StringComparison.OrdinalIgnoreCase))
-            {
-                var testPath = Path.GetFullPath(Path.Combine(currentDir.FullName, inputPath));
-                if (File.Exists(testPath))
-                    return testPath;
-                currentDir = currentDir.Parent;
-            }
-            return null;
-        }
-
-        private async Task<string> ReadFileContentAsync(string filePath)
+        private async Task<string> ReadFileAsync(string filePath, string encoding)
         {
             try
             {
-                using var reader = new StreamReader(filePath);
-                return await reader.ReadToEndAsync();
+                FileInfo fileInfo = new FileInfo(filePath);
+                if (!fileInfo.Exists)
+                    return $"Error: File not found - {filePath}";
+
+                using var reader = new StreamReader(fileInfo.FullName, Encoding.GetEncoding(encoding));
+                string content = await reader.ReadToEndAsync();
+
+                return $"Contents of file '{filePath}':\n{content}\n";
             }
             catch (Exception ex)
             {
-                return $"Error reading file: {ex.Message}";
-            }
-        }
-
-        private string FormatContent(string extension, string content)
-        {
-            if (extension.Equals(".json", StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    var parsedJson = JsonSerializer.Deserialize<object>(content);
-                    var prettyJson = JsonSerializer.Serialize(parsedJson, new JsonSerializerOptions { WriteIndented = true });
-                    return $"File extension: {extension}\n\nParsed JSON:\n{prettyJson}";
-                }
-                catch (Exception ex)
-                {
-                    return $"File extension: {extension}\n\nRaw Content:\n{content}\n\nError parsing JSON: {ex.Message}";
-                }
-            }
-            else
-            {
-                return $"File extension: {extension}\n\nContent:\n{content}";
+                return $"Error reading file '{filePath}': {ex.Message}";
             }
         }
     }

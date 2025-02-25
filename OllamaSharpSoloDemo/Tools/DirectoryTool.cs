@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OllamaSharpSoloDemo.Tools
 {
@@ -41,17 +42,19 @@ namespace OllamaSharpSoloDemo.Tools
                 return JsonSerializer.Serialize(new { error = $"Directory does not exist: {directoryPath}" });
 
             var dirInfo = new DirectoryInfo(directoryPath);
-            var result = new
-            {
-                Directories = dirInfo.GetDirectories()
-                                     .Where(d => (d.Attributes & FileAttributes.Hidden) == 0)
+
+            var directories = dirInfo.GetDirectories()
+                                     .Where(d => !d.Attributes.HasFlag(FileAttributes.Hidden))
                                      .Select(d => d.Name)
-                                     .ToList(),
-                Files = dirInfo.GetFiles()
-                               .Where(f => (f.Attributes & FileAttributes.Hidden) == 0)
+                                     .ToList();
+
+            var files = dirInfo.GetFiles()
+                               .Where(f => !f.Attributes.HasFlag(FileAttributes.Hidden))
                                .Select(f => f.Name)
-                               .ToList()
-            };
+                               .ToList();
+
+            var result = new { Directories = directories, Files = files };
+
 
             return JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
         }
