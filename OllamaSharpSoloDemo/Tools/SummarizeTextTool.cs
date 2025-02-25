@@ -17,7 +17,7 @@ namespace OllamaSharpSoloDemo.Tools
             _ollamaClient = ollamaClient;
             Function = new Function
             {
-                Description = "Summarizes input text using OllamaSharp.",
+                Description = "Summarizes only text when it is requested. Otherwise procceed with a normal answer",
                 Name = "summarize_text",
                 Parameters = new Parameters
                 {
@@ -58,7 +58,7 @@ namespace OllamaSharpSoloDemo.Tools
                     Model = "llama3.2:latest",
                     Messages = new List<Message>
                     {
-                        new Message { Role = "system", Content = prompt },
+                        new Message { Role = "system", Content = "Only summarize when explicitly requested." },
                         new Message { Role = "user", Content = text }
                     }
                 };

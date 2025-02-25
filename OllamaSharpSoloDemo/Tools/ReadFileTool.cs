@@ -52,7 +52,7 @@ namespace OllamaSharpSoloDemo.Tools
                 using var reader = new StreamReader(fileInfo.FullName, Encoding.GetEncoding(encoding));
                 string content = await reader.ReadToEndAsync();
 
-                return $"Contents of file '{filePath}':\n{content}\n";
+                return content;  
             }
             catch (Exception ex)
             {
